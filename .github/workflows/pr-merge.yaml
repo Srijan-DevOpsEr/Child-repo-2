@@ -7,14 +7,13 @@ permissions:
 
 on:
   # push:
-  #   branches: [main]
-  # workflow_dispatch:
-
-  pull_request:
+    pull_request:
     types:
       # - opened        # Triggered when a PR is created (opened)
       - closed        # Triggered when a PR is merged (closed)
       - synchronize   # Triggered when a PR is updated (new commits)
+    branches: [main]
+    workflow_dispatch:
 
 jobs:
   trigger_central_pipeline:
