@@ -6,9 +6,34 @@ permissions:
   pull-requests: read  # only if needed for PR jobs
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  # workflow_dispatch:
+
+  pull_request:
+    types:
+      # - opened        # Triggered when a PR is created (opened)
+      - closed        # Triggered when a PR is merged (closed)
+      - synchronize   # Triggered when a PR is updated (new commits)
+
+jobs:
+  trigger_central_pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Central Pipeline on PR Merge
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}  # Personal Access Token for authentication
+          repository: chain-builds/central-repo  # The central repository where the orchestration pipeline lives
+          event-type: pr_event  # Custom event type to trigger the central pipeline
+          client-payload: |
+            {
+              "triggered_by": "${{ github.repository }}",
+              "pr_event": "${{ github.event.action }}",  # This can be 'opened', 'synchronize', or 'closed'
+              "pr_number": "${{ github.event.pull_request.number }}",
+              "commit_sha": "${{ github.sha }}",
+              "branch": "${{ github.head_ref }}"
+            }
 
 jobs:
   terraform-format:
