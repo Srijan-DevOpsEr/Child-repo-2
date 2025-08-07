@@ -388,3 +388,4 @@ jobs:
   #           eerkunt/terraform-compliance \
   #           -p /target/tfplan.json \
   #           -f /target/features
+  echo "Central Pipeline - PR Event Handler"    
